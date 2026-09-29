@@ -21,6 +21,7 @@ def magnitude_weighted(spectrum, band):
 
 
 #calculate m_u, m_b, m_v for vega
+#TODO: convert F_nu to F_lambda using F_nu = F_lambda * (lambda^2 / c)
 def determine_filter_constants():
     m_u = magnitude_weighted(vega_spectrum, [333, 399]) # bands in nm
     m_b = magnitude_weighted(vega_spectrum, [411, 505])

@@ -32,7 +32,9 @@ for file in folder.iterdir():
 
 """
 Plot colours and add markers for main-sequence stars and giants
+ O5, B0, A0, F0, G0, K0, and M0
 """
+markers = {'O5':'r', 'B0':'b', 'A0':'g', 'F0':'y', 'G0':'olivedrab', 'K0':'c', 'M0':'m'}
 
 spectra_list = Table.read ( "spectra_list.csv" , format = "ascii.csv")
 
@@ -43,9 +45,32 @@ plt.ylabel("U-B")
 plt.ylim(3, -2)
 for star, colours in datalist.items():
     mask = (spectra_list['filename'] == star)
-    MKL_class = spectra_list[mask]['type'][0]
-    ax.plot(colours[0],colours[1], marker='o' if MKL_class[2]=='V' else 'x')    
+    type = spectra_list[mask]['type'][0][0:2]    
+    MKL_class = spectra_list[mask]['type'][0][2]
+    ax.plot(colours[0],colours[1], marker='+' if MKL_class=='V' else 'x', color=markers.get(type,'k'))    
 
+  
 
-plt.savefig('plots\\colours.png', format='png')      
+"""
+Add a line for blackbody colours
+"""
+
+bb_datalist = dict()
+from black_body import spectrum
+for T in range(2000,30000,1000):
+    bb_spectrum = spectrum(T)
+    m_u = magnitude_weighted(bb_spectrum, band_u) + C_U 
+    m_b = magnitude_weighted(bb_spectrum, band_b) + C_B
+    m_v = magnitude_weighted(bb_spectrum, band_v) + C_V    
+    bb_datalist[T] = [m_b - m_v, m_u - m_b]
+
+line = bb_datalist.values()
+bv, ub = zip(*list(line))
+ax.plot(bv,ub, '-', color='black')
+# fig2, ax2 = plt.subplots()
+# ax2.plot(bb['wavelength'],bb['flux'])
+# plt.savefig('plots\\bb.png', format='png')  
+# 
+plt.savefig('plots\\colours.png', format='png')    
+  
     
