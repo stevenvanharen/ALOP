@@ -50,8 +50,8 @@ def findstars(image, threshold, fwhm):
     """
     iraffind = IRAFStarFinder(threshold, fwhm)
     sources = iraffind.find_stars(image)
-    sources.rename_column("x_centroid", "x")
-    sources.rename_column("y_centroid", "y")
+    sources.rename_column("xcentroid", "x")
+    sources.rename_column("ycentroid", "y")
     return sources["id", "x", "y", "flux", "sharpness", "roundness"]
 
 

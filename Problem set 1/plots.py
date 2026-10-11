@@ -8,8 +8,9 @@ def plotCSV(dataset, types, stars, styles):
     fig, ax = plt.subplots()
     #plt.title("Spectra")
     plt.xlabel("Wavelength (Å)")
-    #plt.ylabel("Flux (W $\mathregular{m^-2}$ $\mathregular{nm^-1}$)") #TODO: check unit, per nm or angstrom?
-    plt.ylabel("Flux (W $\mathregular{m^{-2}}$ $\mathregular{nm^{-1}}$)") # erg/cm2/s/A?, change compared to: https://brightspace.universiteitleiden.nl/d2l/le/lessons/494809/topics/4063078
+    plt.ylabel("Flux (erg $\mathregular{cm^{-2}}$ $\mathregular{s^{-1}}$ $\mathregular{\AA^{-1}}$)") # erg/cm2/s/A?, change compared to: https://brightspace.universiteitleiden.nl/d2l/le/lessons/494809/topics/4063078
+    plt.xlim(3000, 9000)
+    
     #find row for 3000
     #find row for 9000
     for i in range(0,len(dataset)):
