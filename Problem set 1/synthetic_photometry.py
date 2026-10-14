@@ -59,7 +59,7 @@ Add a line for blackbody colours
 
 bb_datalist = dict()
 from black_body import spectrum
-for T in range(2000,30000,1000):
+for T in range(2000,31000,1000):
     bb_spectrum = spectrum(T)
     m_u = magnitude_weighted(bb_spectrum, band_u) + C_U 
     m_b = magnitude_weighted(bb_spectrum, band_b) + C_B
