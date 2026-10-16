@@ -16,7 +16,8 @@ def SN(N_source, Nsky, k):
 
 def uncertainties(flux_bv, pixel_radius):
     k = math.pi * pixel_radius * pixel_radius
-    us = list()
+    SN_Bs = list()
+    SN_Vs = list()
     for bv in flux_bv:
         N_source_B = bv[0]
         N_sky_B = bv[1] #is per pixel
@@ -24,8 +25,9 @@ def uncertainties(flux_bv, pixel_radius):
         N_source_V = bv[2] 
         N_sky_V = bv[3] #is per pixel
         SN_V = SN(N_source_V, N_sky_V, k)
-        us.append([SN_B, SN_V])
-    return us
+        SN_Bs.append(SN_B)
+        SN_Vs.append(SN_V)
+    return SN_Bs, SN_Vs
 
 
 ccd_v = fits.getdata("exposure_V_alop_2026_2027.fits")
@@ -41,17 +43,18 @@ print(result_v)
 print(result_b)
 
 flux_bv = np.stack((result_b[0], result_b[1], result_v[0], result_v[1]), axis=1)
+SN_Bs, SN_Vs = uncertainties(flux_bv, 5)
+flux_bv = np.column_stack((flux_bv, np.array(SN_Bs), np.array(SN_Vs)))
+
 
 for bv in flux_bv:
     mb = magnitude_adu((bv[0])/30, gain)+16.43
     mv = magnitude_adu((bv[2])/10, gain)+17.4 
     bminusv = mb - mv   
-    txt = "{b_tot:.0f} & {b_noise:.0f} & {v_tot:.0f} & {v_noise:.0f} & {mb:.3f} & {mv:.3f} & {bv:.3f} \\\\"
-    print(txt.format(b_tot = bv[0], b_noise = bv[1], v_tot = bv[2], v_noise = bv[3], mb = mb, mv = mv, bv = bminusv))
+    txt = "{b_tot:.0f} & {b_noise:.0f} & {v_tot:.0f} & {v_noise:.0f} & {mb:.3f} & {mv:.3f} & {bv:.3f} & {SN_B:.0f} & {SN_V:.0f}\\\\"
+    print(txt.format(b_tot = bv[0], b_noise = bv[1], v_tot = bv[2], v_noise = bv[3], mb = mb, mv = mv, bv = bminusv, SN_B = bv[4], SN_V = bv[5]))
     #print(bminusv)
 
-u = uncertainties(flux_bv, 5)
-print(u)
 
 #print(adu)
 
