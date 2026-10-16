@@ -18,18 +18,13 @@ vega_spectrum['flux'].convert_unit_to(
 
 # or use weighted magnitude as in (1) of PS1 description
 # TODO: correct minor error in integral
-def magnitude_weighted(spectrum, band):
-    interpolated_spectrum = np.interp(np.linspace(band[0], band[1], 100), spectrum['wavelength'], spectrum['flux'])
+def magnitude_weighted(spectrum, band):    
     delta_lambda = (band[1] - band[0])/100
-    integral = 0
-    integral_denominator = 0
-    pos = band[0]
-    for flux in interpolated_spectrum:
-        #integral+=flux * (pos + delta_lambda/2) * delta_lambda
-        #integral_denominator+=(pos + delta_lambda/2) * delta_lambda
+    discrete_lambdas = np.linspace(band[0]+delta_lambda/2, band[1]-delta_lambda/2, 100)    
+    integral = 0       
+    for wavelength in discrete_lambdas:        
+        flux = np.interp(wavelength, spectrum['wavelength'], spectrum['flux'])
         integral+=flux * delta_lambda
-        #integral_denominator+=(pos + delta_lambda/2) * delta_lambda
-        pos+=delta_lambda
     return -2.5 * math.log(integral, 10)
 
 

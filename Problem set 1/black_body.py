@@ -12,7 +12,7 @@ def spectrum(T):
     table = Table(names=('wavelength','flux'),dtype=('f8','f8'))
     #we need the spectrum between 3000 and 6000 angstrom
     for wavelength in range(3000,6000, 10):
-        b_lambda = planck(T, wavelength/1e10)/1e9 # unit W m-2 nm -1 sr -1 # TODO: convert to erg m-2 nm -1 A
+        b_lambda = planck(T, wavelength/1e10)/1e9 # unit W m-2 nm -1 sr -1
         table.add_row((wavelength, b_lambda))
 
     return table

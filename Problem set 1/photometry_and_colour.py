@@ -88,6 +88,12 @@ fig.colorbar(surf, shrink=0.5, aspect=10)
 #print(sky)
 
 plt.show()
+plt.close()
+
+fig, (ax1, ax2) = plt.subplots(1, 2)
+ax1.imshow(ccd_v, cmap='gray', origin='lower')
+ax2.imshow(ccd_b, cmap='gray', origin='lower')
+plt.show()
 
 
 

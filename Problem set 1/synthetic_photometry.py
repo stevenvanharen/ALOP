@@ -17,6 +17,8 @@ from determine_filter_constants import determine_filter_constants, magnitude_wei
 C_U, C_B, C_V = determine_filter_constants(band_u, band_b, band_v)
 
 #print(C_U)
+#print(C_B)
+#print(C_V)
 
 """
 Calculate the colours of all stars in scope
