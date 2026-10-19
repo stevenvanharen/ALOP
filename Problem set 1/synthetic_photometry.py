@@ -87,17 +87,9 @@ legend_elements = [Line2D([0], [0], color='black', lw=2, marker='', label='Black
 for type, colour in markers.items():
     legend_elements.append(Line2D([0], [0], color=colour, lw=0, marker='.', label=type))
 
-# legend_elements = [
-#     Line2D([0], [0], color='blue', lw=0, marker='o', label='Type A (Circle)'),
-#     Line2D([0], [0], color='red', lw=0, marker='^', label='Type B (Triangle)'),
-#     Line2D([0], [0], color='black', lw=2, marker='', label='Blackbody')
-# ]
-
-# 3. Pass the custom handles to the legend
 plt.legend(handles=legend_elements)
 
-plt.savefig('plots\\colours.png', format='png')
-plt.savefig('plots\\colours.eps', format='eps')    
+ 
 
 def plot(star, bb, type, star_name, styles):    
     fig, ax = plt.subplots()    
@@ -132,7 +124,7 @@ def plot(star, bb, type, star_name, styles):
 def plot_combined(divs, styles):    
     fig, ax = plt.subplots()    
     plt.xlabel("Wavelength (Å)")
-    #plt.ylabel("Flux (erg $\mathregular{cm^{-2}}$ $\mathregular{s^{-1}}$ $\mathregular{\AA^{-1}}$)") # erg/cm2/s/A?, change compared to: https://brightspace.universiteitleiden.nl/d2l/le/lessons/494809/topics/4063078
+    plt.ylabel("Flux ratio") # erg/cm2/s/A?, change compared to: https://brightspace.universiteitleiden.nl/d2l/le/lessons/494809/topics/4063078
     plt.xlim(3000, 9000)
     
     #find row for 3000
@@ -144,11 +136,11 @@ def plot_combined(divs, styles):
         table = Table([star['wavelength'], div],names=('wavelength','flux'))
         mask = (table['wavelength'] >= 3000) & (table['wavelength'] <= 9000)    
         ax.plot(table[mask]['wavelength'],table[mask]['flux'], styles[0] , label=type, linewidth=1.0)        
-    ax.axvspan(band_u[0], band_u[1], color='yellow', alpha=0.3, label='U')
-    ax.axvspan(band_b[0], band_b[1], color='blue', alpha=0.3, label='B')
-    ax.axvspan(band_v[0], band_v[1], color='gray', alpha=0.3, label='V')
+    ax.axvspan(band_u[0], band_u[1], color='violet', alpha=0.3, label='U band')
+    ax.axvspan(band_b[0], band_b[1], color='blue', alpha=0.3, label='B band')
+    ax.axvspan(band_v[0], band_v[1], color='yellow', alpha=0.3, label='V band')
     ax.legend()    
-    #plt.savefig('plots\\plots_bb_divs.eps', format='eps')
+    plt.savefig('plots\\plots_bb_divs.eps', format='eps')
     plt.savefig('plots\\plots_bb_divs.png', format='png')
     plt.close()    
 
@@ -175,5 +167,11 @@ for selected_star, type in selected_stars.items():
     divs[type] = [star_spectrum,bb_spectrum]
 
 plot_combined(divs, styles)
+#TODO: add vertical lines
+vertical_lines = [0.341,0.542,-0.030,0.425,-0.013]
+for vertrical_line in vertical_lines:
+    ax.vlines(vertrical_line,-1.5,3, linestyles='--')
+plt.savefig('plots\\colours.png', format='png')
+plt.savefig('plots\\colours.eps', format='eps')   
   
     
