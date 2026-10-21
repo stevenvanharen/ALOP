@@ -141,6 +141,7 @@ def plot_combined(divs, styles):
     ax.axvspan(band_v[0], band_v[1], color='yellow', alpha=0.3, label='V band')
     ax.legend()    
     plt.savefig('plots\\plots_bb_divs.eps', format='eps')
+    plt.savefig('plots\\plots_bb_divs.pdf', format='pdf')
     plt.savefig('plots\\plots_bb_divs.png', format='png')
     plt.close()    
 

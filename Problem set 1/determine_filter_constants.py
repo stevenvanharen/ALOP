@@ -15,9 +15,8 @@ vega_spectrum['flux'].convert_unit_to(
     equivalencies=u.spectral_density(vega_spectrum['wavelength'].quantity)
 )
 
-
 # or use weighted magnitude as in (1) of PS1 description
-def magnitude_weighted(spectrum, band):    
+def magnitude(spectrum, band):    
     delta_lambda = (band[1] - band[0])/100
     discrete_lambdas = np.linspace(band[0]+delta_lambda/2, band[1]-delta_lambda/2, 100)    
     integral = 0       
@@ -25,6 +24,19 @@ def magnitude_weighted(spectrum, band):
         flux = np.interp(wavelength, spectrum['wavelength'], spectrum['flux'])
         integral+=flux * delta_lambda
     return -2.5 * math.log(integral, 10)
+
+
+# or use weighted magnitude as in (1) of PS1 description
+def magnitude_weighted(spectrum, band):    
+    delta_lambda = (band[1] - band[0])/100
+    discrete_lambdas = np.linspace(band[0]+delta_lambda/2, band[1]-delta_lambda/2, 100)    
+    integral = 0  
+    integral_denom = 0     
+    for wavelength in discrete_lambdas:        
+        flux = np.interp(wavelength, spectrum['wavelength'], spectrum['flux'])
+        integral+=flux * delta_lambda * wavelength
+        integral_denom = delta_lambda * wavelength
+    return -2.5 * math.log(integral/integral_denom, 10)
 
 
 #calculate m_u, m_b, m_v for vega

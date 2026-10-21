@@ -7,9 +7,8 @@ import math
 gain = 5
 RON = 250
 
-def magnitude_adu(flux, gain):
-    photonCount = flux*gain
-    return -2.5*math.log(photonCount,10)
+def magnitude_adu(flux):    
+    return -2.5*math.log(flux,10)
 
 def SN(N_source, Nsky, k):
     return (gain * N_source)/math.sqrt((gain * N_source) + (gain * k * Nsky) + (k*RON*RON))
@@ -48,8 +47,8 @@ flux_bv = np.column_stack((flux_bv, np.array(SN_Bs), np.array(SN_Vs)))
 
 
 for bv in flux_bv:
-    mb = magnitude_adu((bv[0])/30, gain)+16.43
-    mv = magnitude_adu((bv[2])/10, gain)+17.4 
+    mb = magnitude_adu((bv[0])/30)+16.43
+    mv = magnitude_adu((bv[2])/10)+17.4 
     bminusv = mb - mv   
     txt = "{b_tot:.0f} & {b_noise:.0f} & {v_tot:.0f} & {v_noise:.0f} & {mb:.3f} & {mv:.3f} & {bv:.3f} & {SN_B:.0f} & {SN_V:.0f}\\\\"
     print(txt.format(b_tot = bv[0], b_noise = bv[1], v_tot = bv[2], v_noise = bv[3], mb = mb, mv = mv, bv = bminusv, SN_B = bv[4], SN_V = bv[5]))
