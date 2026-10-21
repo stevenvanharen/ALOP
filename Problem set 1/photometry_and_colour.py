@@ -57,7 +57,7 @@ for bv in flux_bv:
     mb = magnitude_adu((bv[0])/30)+16.43
     mv = magnitude_adu((bv[2])/10)+17.4 
     bminusv = mb - mv   
-    txt = "{b_tot:.0f} & {b_noise:.0f} & {v_tot:.0f} & {v_noise:.0f} & {mb:.3f} $\\pm$ {sigma_B:.3f} & {mv:.3f} $\\pm$ {sigma_V:.3f} & {bv:.3f} & {SN_B:.0f} & {SN_V:.0f}\\\\"
+    txt = "{b_tot:.0f} & {b_noise:.0f} & {SN_B:.0f} & {mb:.3f}$\\pm${sigma_B:.3f} & {v_tot:.0f} & {v_noise:.0f}  & {SN_V:.0f} & {mv:.3f}$\\pm${sigma_V:.3f} & {bv:.3f}  \\\\"
     print(txt.format(b_tot = bv[0], b_noise = bv[1], v_tot = bv[2], v_noise = bv[3], mb = mb, mv = mv, bv = bminusv, SN_B = bv[4], SN_V = bv[5], sigma_B = abs(bv[6]), sigma_V = abs(bv[7])))
     #print(bminusv)
 
@@ -70,39 +70,59 @@ for bv in flux_bv:
 # 2. Create coordinate grids (X and Y)
 y, x = np.indices(ccd_v.shape)
 
-# 3. Plot the 3D surface
-fig = plt.figure(figsize=(10, 7))
-ax = fig.add_subplot(projection='3d')
+# # 3. Plot the 3D surface
+# fig = plt.figure(figsize=(10, 7))
+# ax = fig.add_subplot(projection='3d')
 
-# surface plot
-surf = ax.plot_surface(
-    x,
-    y,
-    ccd_v,
-    cmap='viridis',
-    edgecolor='none',
-    linewidth=0,
-    antialiased=True,
-)
+# # surface plot
+# surf = ax.plot_surface(
+#     x,
+#     y,
+#     ccd_v,
+#     cmap='viridis',
+#     edgecolor='none',
+#     linewidth=0,
+#     antialiased=True,
+# )
 
-ax.set_title('3D Surface Plot of FITS Data')
-ax.set_xlabel('X Pixel')
-ax.set_ylabel('Y Pixel')
-ax.set_zlabel('Intensity / Value')
-fig.colorbar(surf, shrink=0.5, aspect=10)
+# ax.set_title('3D Surface Plot of FITS Data')
+# ax.set_xlabel('X Pixel')
+# ax.set_ylabel('Y Pixel')
+# ax.set_zlabel('Intensity / Value')
+# fig.colorbar(surf, shrink=0.5, aspect=10)
 
-#flux, sky = aperphot(data, [119.99630765519932], [69.99063811643735], 10.0, [12.0,16.0])
+# #flux, sky = aperphot(data, [119.99630765519932], [69.99063811643735], 10.0, [12.0,16.0])
 
-#print(flux)
-#print(sky)
+# #print(flux)
+# #print(sky)
 
-plt.show()
-plt.close()
+# plt.show()
+# plt.close()
+
+# Calculate background statistics
+mean = np.mean(ccd_v)
+std = np.std(ccd_v)
+
+# Set the limits (e.g., from 1 std below mean to 5 std above mean)
+vmin = mean - 1 * std
+vmax = mean + 5 * std
 
 fig, (ax1, ax2) = plt.subplots(1, 2)
-ax1.imshow(ccd_v, cmap='gray', origin='lower')
-ax2.imshow(ccd_b, cmap='gray', origin='lower')
-plt.show()
+ax1.imshow(ccd_v, cmap='gray', origin='lower', vmin=vmin, vmax=vmax)
+ax1.set_xlabel('V filter exposure')
+
+# Calculate background statistics
+mean = np.mean(ccd_b)
+std = np.std(ccd_b)
+
+# Set the limits (e.g., from 1 std below mean to 5 std above mean)
+vmin = mean - 1 * std
+vmax = mean + 5 * std
+
+ax2.imshow(ccd_b, cmap='gray', origin='lower', vmin=vmin, vmax=vmax)
+ax2.set_xlabel('B filter exposure')
+plt.savefig('plots\\exposures.png', format='png', bbox_inches='tight')
+plt.savefig('plots\\exposures.eps', format='eps', bbox_inches='tight')
 
 
 

@@ -16,9 +16,9 @@ Determine the filter constants using Vega as a reference to define a magnitude s
 from determine_filter_constants import determine_filter_constants, magnitude_weighted
 C_U, C_B, C_V = determine_filter_constants(band_u, band_b, band_v)
 
-#print(C_U)
-#print(C_B)
-#print(C_V)
+print(C_U)
+print(C_B)
+print(C_V)
 
 """
 Calculate the colours of all stars in scope
@@ -131,11 +131,14 @@ def plot_combined(divs, styles):
     #find row for 9000
     for type, spectra in divs.items():
         star = spectra[0]
-        bb = spectra[1]    
+        bb = spectra[1] 
+        T_bb = spectra[2]
         div = star['flux']/bb['flux']
         table = Table([star['wavelength'], div],names=('wavelength','flux'))
-        mask = (table['wavelength'] >= 3000) & (table['wavelength'] <= 9000)    
-        ax.plot(table[mask]['wavelength'],table[mask]['flux'], styles[0] , label=type, linewidth=1.0)        
+        mask = (table['wavelength'] >= 3000) & (table['wavelength'] <= 9000)
+        txt = "{type} (T: {T:.0f})"
+          
+        ax.plot(table[mask]['wavelength'],table[mask]['flux'], styles[0] , label=txt.format(type = type, T = T_bb), linewidth=1.0)        
     ax.axvspan(band_u[0], band_u[1], color='violet', alpha=0.3, label='U band')
     ax.axvspan(band_b[0], band_b[1], color='blue', alpha=0.3, label='B band')
     ax.axvspan(band_v[0], band_v[1], color='yellow', alpha=0.3, label='V band')
@@ -165,10 +168,11 @@ for selected_star, type in selected_stars.items():
     scaling =  star_spectrum[(star_spectrum['wavelength'] == 6000)]['flux']/bb_spectrum[(bb_spectrum['wavelength'] == 6000)]['flux']
     bb_spectrum['flux'] *= scaling
     plot(star_spectrum,bb_spectrum,selected_star, type,styles)
-    divs[type] = [star_spectrum,bb_spectrum]
+    divs[type] = [star_spectrum,bb_spectrum, T_bb]
 
 plot_combined(divs, styles)
-#TODO: add vertical lines
+
+#add vertical lines
 vertical_lines = [0.341,0.542,-0.030,0.425,-0.013]
 for vertrical_line in vertical_lines:
     ax.vlines(vertrical_line,-1.5,3, linestyles='--')

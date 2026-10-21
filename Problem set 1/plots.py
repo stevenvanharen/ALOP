@@ -8,7 +8,7 @@ def plotCSV(dataset, types, stars, styles):
     fig, ax = plt.subplots()
     #plt.title("Spectra")
     plt.xlabel("Wavelength (Å)")
-    #plt.ylabel("Flux (erg $\mathregular{cm^{-2}}$ $\mathregular{s^{-1}}$ $\mathregular{\AA^{-1}}$)") # erg/cm2/s/A?, change compared to: https://brightspace.universiteitleiden.nl/d2l/le/lessons/494809/topics/4063078
+    plt.ylabel(r"Flux (erg $\mathregular{cm^{-2}}$ $\mathregular{s^{-1}}$ $\mathregular{\AA^{-1}}$)") # erg/cm2/s/A?, change compared to: https://brightspace.universiteitleiden.nl/d2l/le/lessons/494809/topics/4063078
     plt.xlim(3000, 9000)
     
     #find row for 3000
@@ -17,7 +17,7 @@ def plotCSV(dataset, types, stars, styles):
         data = dataset[i]
         type = types[i]
         mask = (data['wavelength'] >= 3000) & (data['wavelength'] <= 9000)    
-        ax.plot(data[mask]['wavelength'],data[mask]['flux'], styles[i] , label=stars[i] + ", type: " + type, linewidth=2.0)
+        ax.plot(data[mask]['wavelength'],data[mask]['flux'], styles[i] , label="Spectral type: " + type, linewidth=1.0)
     ax.legend()
     #fig.xlabel('test')
     fig.savefig("plots\\plots.jpg")
@@ -35,7 +35,7 @@ p = r"spectra"
 #read spectra list
 spectra_list = Table.read ( "spectra_list.csv" , format = "ascii.csv")
 
-stars = ['Ab11f', 'Bb18','Bb63']
+stars = ['Ab11f', 'Bb18','Bb63'] #['Bb71']#
 styles = ['--','-','-.']
 folder = 'spectra\\'
 
@@ -49,3 +49,5 @@ for star in stars:
     dataset.append(Table.read ( folder+filename , format = "ascii.csv"))
 
 plotCSV(dataset, types, stars, styles)
+
+#Bb71.csv
