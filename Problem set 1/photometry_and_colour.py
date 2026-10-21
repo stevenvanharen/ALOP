@@ -6,9 +6,10 @@ import math
 
 gain = 5
 RON = 250
+factor = -2.5/math.log(10)
 
-def magnitude_adu(flux):    
-    return -2.5*math.log(flux,10)
+def magnitude_adu(adus):    
+    return -2.5*math.log(adus,10)
 
 def SN(N_source, Nsky, k):
     return (gain * N_source)/math.sqrt((gain * N_source) + (gain * k * Nsky) + (k*RON*RON))
@@ -17,16 +18,22 @@ def uncertainties(flux_bv, pixel_radius):
     k = math.pi * pixel_radius * pixel_radius
     SN_Bs = list()
     SN_Vs = list()
+    sigma_mBs = list() 
+    sigma_mVs = list()
     for bv in flux_bv:
         N_source_B = bv[0]
         N_sky_B = bv[1] #is per pixel
         SN_B = SN(N_source_B, N_sky_B, k)
+        sigma_mB = factor/SN_B
         N_source_V = bv[2] 
         N_sky_V = bv[3] #is per pixel
         SN_V = SN(N_source_V, N_sky_V, k)
+        sigma_mV = factor/SN_V
         SN_Bs.append(SN_B)
         SN_Vs.append(SN_V)
-    return SN_Bs, SN_Vs
+        sigma_mBs.append(sigma_mB)
+        sigma_mVs.append(sigma_mV)
+    return SN_Bs, SN_Vs, sigma_mBs, sigma_mVs
 
 
 ccd_v = fits.getdata("exposure_V_alop_2026_2027.fits")
@@ -42,16 +49,16 @@ print(result_v)
 print(result_b)
 
 flux_bv = np.stack((result_b[0], result_b[1], result_v[0], result_v[1]), axis=1)
-SN_Bs, SN_Vs = uncertainties(flux_bv, 5)
-flux_bv = np.column_stack((flux_bv, np.array(SN_Bs), np.array(SN_Vs)))
+SN_Bs, SN_Vs, sigma_mBs, sigma_mVs = uncertainties(flux_bv, 5)
+flux_bv = np.column_stack((flux_bv, np.array(SN_Bs), np.array(SN_Vs), np.array(sigma_mBs), np.array(sigma_mVs)))
 
 
 for bv in flux_bv:
     mb = magnitude_adu((bv[0])/30)+16.43
     mv = magnitude_adu((bv[2])/10)+17.4 
     bminusv = mb - mv   
-    txt = "{b_tot:.0f} & {b_noise:.0f} & {v_tot:.0f} & {v_noise:.0f} & {mb:.3f} & {mv:.3f} & {bv:.3f} & {SN_B:.0f} & {SN_V:.0f}\\\\"
-    print(txt.format(b_tot = bv[0], b_noise = bv[1], v_tot = bv[2], v_noise = bv[3], mb = mb, mv = mv, bv = bminusv, SN_B = bv[4], SN_V = bv[5]))
+    txt = "{b_tot:.0f} & {b_noise:.0f} & {v_tot:.0f} & {v_noise:.0f} & {mb:.3f} $\\pm$ {sigma_B:.3f} & {mv:.3f} $\\pm$ {sigma_V:.3f} & {bv:.3f} & {SN_B:.0f} & {SN_V:.0f}\\\\"
+    print(txt.format(b_tot = bv[0], b_noise = bv[1], v_tot = bv[2], v_noise = bv[3], mb = mb, mv = mv, bv = bminusv, SN_B = bv[4], SN_V = bv[5], sigma_B = abs(bv[6]), sigma_V = abs(bv[7])))
     #print(bminusv)
 
 
