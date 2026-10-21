@@ -136,7 +136,7 @@ def plot_combined(divs, styles):
         div = star['flux']/bb['flux']
         table = Table([star['wavelength'], div],names=('wavelength','flux'))
         mask = (table['wavelength'] >= 3000) & (table['wavelength'] <= 9000)
-        txt = "{type} (T: {T:.0f})"
+        txt = "{type} (T: {T:.0f} K)"
           
         ax.plot(table[mask]['wavelength'],table[mask]['flux'], styles[0] , label=txt.format(type = type, T = T_bb), linewidth=1.0)        
     ax.axvspan(band_u[0], band_u[1], color='violet', alpha=0.3, label='U band')
